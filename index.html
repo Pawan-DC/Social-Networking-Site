@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Connect - Professional Social Network</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #181818;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #555;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .auth {
+            margin-bottom: 20px;
+        }
+        .auth input, .auth button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        .auth button {
+            background: #ff9800;
+            cursor: pointer;
+        }
+        .feed {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .post {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .actions button {
+            background: #ff9800;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .comments {
+            margin-top: 10px;
+            padding-left: 15px;
+            border-left: 2px solid #ff9800;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Social Connect</div>
+            <nav class="menu">
+                <a onclick="showPage('home')">Home</a>
+                <a onclick="showPage('profile')">Profile</a>
+                <a onclick="showPage('notifications')">Notifications</a>
+            </nav>
+        </header>
+        
+        <div id="auth" class="auth">
+            <input type="text" id="username" placeholder="Enter your name">
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="home" class="page">
+            <div class="post-form">
+                <input type="text" id="postContent" placeholder="What's on your mind?">
+                <button onclick="createPost()">Post</button>
+            </div>
+            <div class="feed" id="feed"></div>
+        </div>
+        
+        <div id="profile" class="page hidden">
+            <h2>Profile Page</h2>
+            <p>Welcome, <span id="profileName"></span>!</p>
+        </div>
+        
+        <div id="notifications" class="page hidden">
+            <h2>Notifications</h2>
+            <p>No new notifications</p>
+        </div>
+    </div>
+    
+    <script>
+        let currentUser = "";
+        function login() {
+            currentUser = document.getElementById('username').value;
+            if (currentUser.trim() === '') return;
+            document.getElementById('auth').style.display = 'none';
+            document.getElementById('profileName').innerText = currentUser;
+        }
+
+        function createPost() {
+            if (!currentUser) {
+                alert("Please log in first.");
+                return;
+            }
+            let content = document.getElementById('postContent').value;
+            if (content.trim() === '') return;
+            let post = document.createElement('div');
+            post.classList.add('post');
+            post.innerHTML = `<h3>${currentUser}</h3>
+                <p>${content}</p>
+                <div class="actions">
+                    <button onclick="likePost(this)">Like (<span>0</span>)</button>
+                    <button onclick="commentPost(this)">Comment</button>
+                </div>
+                <div class="comments"></div>`;
+            document.getElementById('feed').prepend(post);
+            document.getElementById('postContent').value = '';
+        }
+
+        function likePost(button) {
+            let countSpan = button.querySelector('span');
+            let count = parseInt(countSpan.innerText);
+            count++;
+            countSpan.innerText = count;
+        }
+
+        function commentPost(button) {
+            let comment = prompt("Enter your comment:");
+            if (comment) {
+                let commentElement = document.createElement('p');
+                commentElement.innerText = `${currentUser}: ${comment}`;
+                let commentsContainer = button.parentNode.nextElementSibling;
+                commentsContainer.appendChild(commentElement);
+            }
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
